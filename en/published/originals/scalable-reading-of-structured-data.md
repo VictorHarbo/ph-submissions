@@ -281,20 +281,29 @@ In this next step, you add the result of the calculation above to a dataframe. U
       summarise(mean = mean(favorite_count)) %>%
       mutate(interaction = "favorite_count")
 
+In the next step you calculate the mean for retweets following the same method as you did with the favorite count and add it to the interactions dataframe:
+
+    interactions %>% 
+      add_row(
+        sesamestreet_data %>% 
+          group_by(verified) %>% 
+          summarise(gns = mean(retweet_count), .groups = "drop") %>% 
+          mutate(interaction = "retweet_count"))
+
 Using this method, you achieve a dataframe containing the mean values of the different interactions, which makes it possible to pass the data on to the ggplot-package for visualisation, which is done like this:
 
     interactions  %>%
       ggplot(aes(x = verified, y = mean)) +
       geom_col() +
       facet_wrap(~interaction, nrow = 1) +
-      labs(title = "Figure 4 - Means of different interaction count dispersed on the verified\nstatus in the sesammestreet dataset",
+      labs(title = "Figure 3 - Means of different interaction count dispersed on the verified\nstatus in the sesammestreet dataset",
            subtitle = "Period: Period: 4 December 2021 - 13 December 2021",
-           caption = "Total number of tweets: 2411",
+           caption = "Total number of tweets: 2435",
            x = "Verified status",
            y = "Average of engagements counts") +
       scale_x_discrete(labels=c("FALSE" = "Not Verified", "TRUE" = "Verified"))
 
-The visualisation looks a lot like the previous bar charts, but the difference here is `facet_wrap`, which creates three bar charts for each type of interaction. The graph illustrates that tweets from verified accounts gets more attention than tweets from non-verified accounts. 
+The visualisation looks a lot like the previous bar charts, but the difference here is `facet_wrap`, which creates two bar charts for each type of interaction. The graph illustrates that tweets from verified accounts gets more attention than tweets from non-verified accounts. 
 
 {% include figure.html filename="scalable-reading-of-structured-data-3.png" alt="Bar chart that shows the average number of likes for tweets from non-verified and verified acocunts. The average for non-verified accounts is 1 and the average for verified accounts is approximately 108." caption="Means of different interaction count dispersed on verified status in the period from 4 December 2021 until 13 December 2021. The total number of tweets was 2435." %}
 
